@@ -1,0 +1,178 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <h1 class="mb-3">لوحة المعلومات</h1>
+        
+        <!-- Stats Overview -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card stats-card bg-primary text-white">
+                    <div class="card-body">
+                        <i class="fas fa-tasks"></i>
+                        <div class="stats-number">{{ total_tasks }}</div>
+                        <div class="stats-title">إجمالي المهام</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card bg-success text-white">
+                    <div class="card-body">
+                        <i class="fas fa-check-circle"></i>
+                        <div class="stats-number">{{ completed_tasks }}</div>
+                        <div class="stats-title">المهام المكتملة</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card bg-warning text-dark">
+                    <div class="card-body">
+                        <i class="fas fa-hourglass-half"></i>
+                        <div class="stats-number">{{ pending_tasks }}</div>
+                        <div class="stats-title">المهام قيد الانتظار</div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card stats-card bg-info text-white">
+                    <div class="card-body">
+                        <i class="fas fa-chart-line"></i>
+                        <div class="stats-number">{{ completion_rate|round(1) }}%</div>
+                        <div class="stats-title">نسبة الإكمال</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Upcoming Tasks -->
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>المهام القادمة</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if upcoming_tasks %}
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>المهمة</th>
+                                        <th>المقرر</th>
+                                        <th>تاريخ الاستحقاق</th>
+                                        <th>الأولوية</th>
+                                        <th>الحالة</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for task in upcoming_tasks %}
+                                    <tr class="priority-{{ task.priority }}">
+                                        <td>
+                                            <a href="{{ url_for('tasks.show', id=task.id) }}">{{ task.title }}</a>
+                                        </td>
+                                        <td>
+                                            <a href="{{ url_for('courses.show', id=task.course.id) }}" style="color: {{ task.course.color }}">
+                                                {{ task.course.title }}
+                                            </a>
+                                        </td>
+                                        <td>{{ task.due_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                                        <td>
+                                            {% if task.priority == 'high' %}
+                                            <span class="badge bg-danger">عالية</span>
+                                            {% elif task.priority == 'medium' %}
+                                            <span class="badge bg-warning text-dark">متوسطة</span>
+                                            {% else %}
+                                            <span class="badge bg-success">منخفضة</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>
+                                            {% if task.status == 'pending' %}
+                                            <span class="badge badge-pending">قيد الانتظار</span>
+                                            {% elif task.status == 'in_progress' %}
+                                            <span class="badge badge-in-progress">قيد التنفيذ</span>
+                                            {% else %}
+                                            <span class="badge badge-completed">مكتملة</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            لا توجد مهام قادمة في الأيام السبعة القادمة.
+                        </div>
+                        {% endif %}
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('tasks.index') }}" class="btn btn-outline-primary">
+                                <i class="fas fa-list me-1"></i>عرض جميع المهام
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Notes and Courses -->
+            <div class="col-md-4">
+                <!-- Recent Notes -->
+                <div class="card mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0"><i class="fas fa-sticky-note me-2"></i>آخر الملاحظات</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if recent_notes %}
+                        <div class="list-group">
+                            {% for note in recent_notes %}
+                            <a href="{{ url_for('notes.show', id=note.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h6 class="mb-1">{{ note.title }}</h6>
+                                    <small>{{ note.updated_at.strftime('%Y-%m-%d') }}</small>
+                                </div>
+                                <small class="text-muted">{{ note.course.title }}</small>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            لا توجد ملاحظات حتى الآن.
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                <!-- Courses -->
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0"><i class="fas fa-graduation-cap me-2"></i>المقررات</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if courses %}
+                        <div class="list-group">
+                            {% for course in courses %}
+                            <a href="{{ url_for('courses.show', id=course.id) }}" class="list-group-item list-group-item-action">
+                                <div class="d-flex align-items-center">
+                                    <div class="me-3" style="width: 15px; height: 15px; background-color: {{ course.color }}; border-radius: 50%;"></div>
+                                    <div>{{ course.title }}</div>
+                                </div>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            لا توجد مقررات حتى الآن.
+                        </div>
+                        {% endif %}
+                        <div class="text-center mt-3">
+                            <a href="{{ url_for('courses.new') }}" class="btn btn-outline-success">
+                                <i class="fas fa-plus me-1"></i>إضافة مقرر جديد
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

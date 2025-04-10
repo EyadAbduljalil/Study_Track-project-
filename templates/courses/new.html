@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="mb-4">إضافة مقرر جديد</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+    
+    <div class="mb-3">
+        {{ form.title.label(class="form-label") }}
+        {{ form.title(class="form-control") }}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.code.label(class="form-label") }}
+        {{ form.code(class="form-control") }}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.instructor.label(class="form-label") }}
+        {{ form.instructor(class="form-control") }}
+    </div>
+    
+    <div class="mb-3">
+        {{ form.color.label(class="form-label") }}
+        {{ form.color(class="form-control", type="color") }}
+    </div>
+    
+    <button type="submit" class="btn btn-primary">حفظ</button>
+    <a href="{{ url_for('courses.index') }}" class="btn btn-secondary">إلغاء</a>
+</form>
+{% endblock %}

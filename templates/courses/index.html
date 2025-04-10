@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>المقررات</h1>
+            <a href="{{ url_for('courses.new') }}" class="btn btn-success">
+                <i class="fas fa-plus me-1"></i>إضافة مقرر جديد
+            </a>
+        </div>
+    </div>
+</div>
+
+{% if courses %}
+<div class="row">
+    {% for course in courses %}
+    <div class="col-md-4 mb-4">
+        <div class="card course-card h-100">
+            <div class="card-header" style="background-color: {{ course.color }};">
+                <h5 class="mb-0">{{ course.title }}</h5>
+            </div>
+            <div class="card-body">
+                {% if course.code %}
+                <p><strong>الرمز:</strong> {{ course.code }}</p>
+                {% endif %}
+                
+                {% if course.instructor %}
+                <p><strong>المدرس:</strong> {{ course.instructor }}</p>
+                {% endif %}
+                
+                <p><strong>تاريخ الإضافة:</strong> {{ course.created_at.strftime('%Y-%m-%d') }}</p>
+                
+                <!-- Task stats -->
+                {% set total_tasks = course.tasks.count() %}
+                {% set completed_tasks = course.tasks.filter_by(status='completed').count() %}
+                {% set completion_rate = (completed_tasks / total_tasks * 100) if total_tasks > 0 else 0 %}
+                
+                <div class="mt-3">
+                    <p><strong>المهام:</strong> {{ completed_tasks }}/{{ total_tasks }}</p>
+                    <div class="progress">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ completion_rate }}%;" 
+                             aria-valuenow="{{ completion_rate }}" aria-valuemin="0" aria-valuemax="100">
+                            {{ completion_rate|round(1) }}%
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-footer">
+                <div class="d-flex justify-content-between">
+                    <a href="{{ url_for('courses.show', id=course.id) }}" class="btn btn-primary btn-sm">
+                        <i class="fas fa-eye me-1"></i>عرض
+                    </a>
+                    <div>
+                        <a href="{{ url_for('courses.edit', id=course.id) }}" class="btn btn-warning btn-sm">
+                            <i class="fas fa-edit me-1"></i>تعديل
+                        </a>
+                        <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteCourseModal{{ course.id }}">
+                            <i class="fas fa-trash-alt me-1"></i>حذف
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Delete Confirmation Modal -->
+        <div class="modal fade" id="deleteCourseModal{{ course.id }}" tabindex="-1" aria-labelledby="deleteCourseModalLabel{{ course.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteCourseModalLabel{{ course.id }}">تأكيد الحذف</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        هل أنت متأكد من رغبتك في حذف المقرر "{{ course.title }}"؟ سيتم حذف جميع المهام والملاحظات المرتبطة به.
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        <form action="{{ url_for('courses.delete', id=course.id) }}" method="POST">
+                            <button type="submit" class="btn btn-danger">حذف</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="alert alert-info">
+    <p>لا توجد مقررات حتى الآن. قم بإضافة مقرر جديد للبدء.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,184 @@
+/* Custom styles for StudyTrack */
+
+/* General styles */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+}
+
+/* Card styling */
+.card {
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.card:hover {
+    transform: translateY(-5px);
+}
+
+.card-header {
+    border-radius: 10px 10px 0 0 !important;
+    font-weight: bold;
+}
+
+/* Course cards */
+.course-card {
+    height: 100%;
+}
+
+.course-card .card-header {
+    color: white;
+}
+
+/* Task priority indicators */
+.priority-high {
+    border-right: 5px solid #dc3545;
+}
+
+.priority-medium {
+    border-right: 5px solid #ffc107;
+}
+
+.priority-low {
+    border-right: 5px solid #28a745;
+}
+
+/* Task status badges */
+.badge-pending {
+    background-color: #ffc107;
+    color: #212529;
+}
+
+.badge-in-progress {
+    background-color: #17a2b8;
+    color: white;
+}
+
+.badge-completed {
+    background-color: #28a745;
+    color: white;
+}
+
+/* Dashboard stats */
+.stats-card {
+    text-align: center;
+    padding: 15px;
+}
+
+.stats-card i {
+    font-size: 2rem;
+    margin-bottom: 10px;
+}
+
+.stats-card .stats-number {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Notes */
+.note-content {
+    white-space: pre-wrap;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+/* Forms */
+.form-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* Custom buttons */
+.btn-floating {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+    font-size: 24px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .btn-floating {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Dark mode support */
+.dark-mode {
+    background-color: #343a40;
+    color: #f8f9fa;
+}
+
+.dark-mode .card {
+    background-color: #454d55;
+    color: #f8f9fa;
+}
+
+.dark-mode .navbar {
+    background-color: #212529 !important;
+}
+
+.dark-mode .footer {
+    background-color: #212529 !important;
+    color: #f8f9fa;
+}
+
+/* تخصيص البطاقات */
+.card {
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+/* جعل الصورة الشخصية أكثر دقة */
+.card-header img {
+    border: 2px solid #fff;
+    margin-left: 10px;
+}
+
+/* تنسيق حقول الإدخال */
+.form-control {
+    border-radius: 5px;
+    padding: 10px;
+}
+
+/* تخصيص الأزرار */
+.btn {
+    border-radius: 5px;
+    padding: 10px 15px;
+}
+
+/* تحسين التنسيق العام */
+.card-body {
+    padding: 30px;
+}
+
+.card-header {
+    background-color: #007bff;
+}
+
+.card-body input,
+.card-body select,
+.card-body textarea {
+    font-size: 16px;
+}
+
+/* إضافة تأثيرات عند التفاعل */
+.form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}

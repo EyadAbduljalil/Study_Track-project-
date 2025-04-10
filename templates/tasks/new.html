@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<h1 class="mb-4">إضافة مهمة جديدة</h1>
+
+<form method="POST">
+    {{ form.hidden_tag() }}
+
+    <div class="mb-3">
+        {{ form.title.label(class="form-label") }}
+        {{ form.title(class="form-control") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.description.label(class="form-label") }}
+        {{ form.description(class="form-control", rows=3) }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.due_date.label(class="form-label") }}
+        {{ form.due_date(class="form-control", type="datetime-local") }}
+
+    </div>
+
+    <div class="mb-3">
+        {{ form.status.label(class="form-label") }}
+        {{ form.status(class="form-select") }}
+    </div>
+
+    <div class="mb-3">
+        {{ form.course_id.label(class="form-label") }}
+        {{ form.course_id(class="form-select") }}
+    </div>
+
+    <button type="submit" class="btn btn-primary">إضافة</button>
+    <a href="{{ url_for('tasks.index') }}" class="btn btn-secondary">إلغاء</a>
+</form>
+{% endblock %}

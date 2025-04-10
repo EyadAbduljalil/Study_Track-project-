@@ -1,0 +1,187 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12 mb-4">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1>المهام</h1>
+            <div class="dropdown">
+                <button class="btn btn-success dropdown-toggle" type="button" id="addTaskDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-plus me-1"></i>إضافة مهمة جديدة
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="addTaskDropdown">
+                    {% for course in courses %}
+                    <li><a class="dropdown-item" href="{{ url_for('tasks.new', course_id=course.id) }}">{{ course.title }}</a></li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-header bg-light">
+        <h5 class="mb-0">تصفية المهام</h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('tasks.index') }}" class="row g-3">
+            <div class="col-md-4">
+                <label for="status" class="form-label">الحالة</label>
+                <select name="status" id="status" class="form-select">
+                    <option value="all" {% if current_filters.status == 'all' %}selected{% endif %}>الكل</option>
+                    <option value="pending" {% if current_filters.status == 'pending' %}selected{% endif %}>قيد الانتظار</option>
+                    <option value="in_progress" {% if current_filters.status == 'in_progress' %}selected{% endif %}>قيد التنفيذ</option>
+                    <option value="completed" {% if current_filters.status == 'completed' %}selected{% endif %}>مكتملة</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="priority" class="form-label">الأولوية</label>
+                <select name="priority" id="priority" class="form-select">
+                    <option value="all" {% if current_filters.priority == 'all' %}selected{% endif %}>الكل</option>
+                    <option value="low" {% if current_filters.priority == 'low' %}selected{% endif %}>منخفضة</option>
+                    <option value="medium" {% if current_filters.priority == 'medium' %}selected{% endif %}>متوسطة</option>
+                    <option value="high" {% if current_filters.priority == 'high' %}selected{% endif %}>عالية</option>
+                </select>
+            </div>
+            <div class="col-md-4">
+                <label for="course_id" class="form-label">المقرر</label>
+                <select name="course_id" id="course_id" class="form-select">
+                    <option value="all" {% if current_filters.course_id == 'all' %}selected{% endif %}>الكل</option>
+                    {% for course in courses %}
+                    <option value="{{ course.id }}" {% if current_filters.course_id|string == course.id|string %}selected{% endif %}>{{ course.title }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-filter me-1"></i>تصفية
+                </button>
+                <a href="{{ url_for('tasks.index') }}" class="btn btn-secondary">
+                    <i class="fas fa-redo me-1"></i>إعادة ضبط
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if tasks %}
+<div class="card">
+    <div class="card-header bg-primary text-white">
+        <h5 class="mb-0">قائمة المهام</h5>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>المهمة</th>
+                        <th>المقرر</th>
+                        <th>تاريخ الاستحقاق</th>
+                        <th>الأولوية</th>
+                        <th>الحالة</th>
+                        <th>الإجراءات</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                    <tr class="priority-{{ task.priority }}">
+                        <td>
+                            <a href="{{ url_for('tasks.show', id=task.id) }}">{{ task.title }}</a>
+                            {% if task.description %}
+                            <i class="fas fa-info-circle text-muted ms-1" data-bs-toggle="tooltip" title="{{ task.description }}"></i>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('courses.show', id=task.course.id) }}" style="color: {{ task.course.color }}">
+                                {{ task.course.title }}
+                            </a>
+                        </td>
+                        <td>{{ task.due_date.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if task.priority == 'high' %}
+                            <span class="badge bg-danger">عالية</span>
+                            {% elif task.priority == 'medium' %}
+                            <span class="badge bg-warning text-dark">متوسطة</span>
+                            {% else %}
+                            <span class="badge bg-success">منخفضة</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-sm dropdown-toggle {% if task.status == 'pending' %}btn-warning{% elif task.status == 'in_progress' %}btn-info{% else %}btn-success{% endif %}" type="button" data-bs-toggle="dropdown">
+                                    {% if task.status == 'pending' %}قيد الانتظار{% elif task.status == 'in_progress' %}قيد التنفيذ{% else %}مكتملة{% endif %}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><button class="dropdown-item status-update-btn" data-task-id="{{ task.id }}" data-status="pending">قيد الانتظار</button></li>
+                                    <li><button class="dropdown-item status-update-btn" data-task-id="{{ task.id }}" data-status="in_progress">قيد التنفيذ</button></li>
+                                    <li><button class="dropdown-item status-update-btn" data-task-id="{{ task.id }}" data-status="completed">مكتملة</button></li>
+                                </ul>
+                            </div>
+                            <form id="status-form-{{ task.id }}" action="{{ url_for('tasks.update_status', id=task.id) }}" method="POST" style="display: none;">
+                                <input type="hidden" name="status" value="">
+                            </form>
+                        </td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                <a href="{{ url_for('tasks.edit', id=task.id) }}" class="btn btn-warning btn-sm">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                                <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteTaskModal" data-task-id="{{ task.id }}" data-task-title="{{ task.title }}">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Global Delete Modal -->
+<div class="modal fade" id="deleteTaskModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <form method="POST" id="deleteTaskForm">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">تأكيد الحذف</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="إغلاق"></button>
+        </div>
+        <div class="modal-body">
+          <p>هل أنت متأكد من رغبتك في حذف المهمة <strong id="taskTitle"></strong>؟</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+          <button type="submit" class="btn btn-danger">حذف</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% else %}
+<div class="alert alert-info">
+    <p>لا توجد مهام تطابق معايير التصفية. قم بتغيير المعايير أو إضافة مهام جديدة.</p>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script>
+    const deleteTaskModal = document.getElementById('deleteTaskModal');
+    deleteTaskModal.addEventListener('show.bs.modal', function (event) {
+        const button = event.relatedTarget;
+        const taskId = button.getAttribute('data-task-id');
+        const taskTitle = button.getAttribute('data-task-title');
+
+        const form = document.getElementById('deleteTaskForm');
+        const titleSpan = document.getElementById('taskTitle');
+
+        form.action = `/tasks/${taskId}/delete`;
+        titleSpan.textContent = taskTitle;
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,67 @@
+{% extends "layout.html" %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="text-center mb-5">
+            <h1 class="display-4">StudyTrack</h1>
+            <p class="lead">منصة إدارة المهام التعليمية لمساعدة الطلاب على تنظيم دراستهم وتتبع تقدمهم</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title"><i class="fas fa-graduation-cap me-2"></i>إدارة المقررات</h2>
+                        <p class="card-text">قم بإضافة مقرراتك الدراسية وتنظيمها بطريقة سهلة. يمكنك تخصيص لون لكل مقرر لتمييزه بسهولة.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title"><i class="fas fa-tasks me-2"></i>تتبع المهام</h2>
+                        <p class="card-text">أضف مهامك الدراسية مع تواريخ الاستحقاق والأولويات. تابع حالة كل مهمة وشاهد إحصائيات تقدمك.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title"><i class="fas fa-sticky-note me-2"></i>الملاحظات الدراسية</h2>
+                        <p class="card-text">احتفظ بملاحظاتك الدراسية لكل مقرر في مكان واحد. يمكنك مشاركة الملاحظات مع زملائك بسهولة.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-body">
+                        <h2 class="card-title"><i class="fas fa-chart-bar me-2"></i>إحصائيات وتحليلات</h2>
+                        <p class="card-text">شاهد إحصائيات تقدمك في كل مقرر ونسب إكمال المهام من خلال رسوم بيانية سهلة الفهم.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('main.dashboard') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-tachometer-alt me-2"></i>الذهاب إلى لوحة المعلومات
+            </a>
+            {% else %}
+            <div class="d-flex justify-content-center gap-3">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sign-in-alt me-2"></i>تسجيل الدخول
+                </a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">
+                    <i class="fas fa-user-plus me-2"></i>إنشاء حساب جديد
+                </a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
